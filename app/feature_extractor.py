@@ -1,7 +1,7 @@
 
 class FeatureExtractor:
 
-    def extractFeatures(self, review: dict):
+    def extract_features(self, review: dict):
         value = 0
 
         # TODO Get synonyms with wordnet?
