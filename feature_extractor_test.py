@@ -1,4 +1,3 @@
-from app.file.xlsx_reader import XlsxReader
 from app.feature_extractor import FeatureExtractor
 from pandas import read_excel
 import os
