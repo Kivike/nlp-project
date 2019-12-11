@@ -131,3 +131,6 @@ dmypy.json
 ### Own additions
 .vscode
 datasets/
+
+# IDE exception
+.idea
