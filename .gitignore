@@ -132,3 +132,7 @@ dmypy.json
 .vscode
 datasets/
 .DS_Store
+
+# IDE exception
+.idea
+nlp-project.iml
