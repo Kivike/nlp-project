@@ -131,3 +131,4 @@ dmypy.json
 ### Own additions
 .vscode
 datasets/
+.DS_Store
