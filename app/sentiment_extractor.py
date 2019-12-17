@@ -51,3 +51,4 @@ class SentimentExtractor:
                             antonyms.append(antonym.name())
 
         return synonyms, antonyms
+        
