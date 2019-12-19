@@ -46,6 +46,10 @@ def read_csv_directory(directory: str, columns: List[str] = None, filelimit: int
     return pd.concat(data_frames, axis = 0, ignore_index = True)
 
 def get_absolute_path(path: str):
+    """
+    Convert Relative path of caller to absolute path,
+    or simply returns the path if it is already absolute
+    """
     if not path.startswith(os.path.sep):
         path = os.getcwd() + os.path.sep + path
 

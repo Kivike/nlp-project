@@ -20,3 +20,4 @@ if args.hotel_data:
     sent_ext.process_file(args.hotel_data, save_to_file)
 else:
     print("Nothing to do")
+    
