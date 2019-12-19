@@ -47,7 +47,7 @@ def read_csv_directory(directory: str, columns: List[str] = None, filelimit: int
 
 def get_absolute_path(path: str):
     """
-    Convert Relative path of caller to absolute path,
+    Convert relative path of caller to absolute path,
     or simply returns the path if it is already absolute
     """
     if not path.startswith(os.path.sep):
