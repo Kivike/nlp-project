@@ -1,6 +1,7 @@
 import glob
 import pandas as pd
 from typing import List, Union
+import os
 
 def read_csv_directory(directory: str, columns: List[str] = None, filelimit: int = None) -> pd.DataFrame:
     """Read csv files from a directory and combine into one single DataFrame. The
@@ -43,3 +44,9 @@ def read_csv_directory(directory: str, columns: List[str] = None, filelimit: int
             break
 
     return pd.concat(data_frames, axis = 0, ignore_index = True)
+
+def get_absolute_path(path: str):
+    if not path.startswith(os.path.sep):
+        path = os.getcwd() + os.path.sep + path
+
+    return path
