@@ -9,3 +9,5 @@ xlrd==1.2.0
 nltk==3.4.5
 numpy==1.17.4
 openpyxl==3.0.2
+pyexcel==0.5.15
+pyexcel-sortable==0.0.2
