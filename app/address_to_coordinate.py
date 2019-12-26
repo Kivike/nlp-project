@@ -13,5 +13,9 @@ df = pd.read_excel('../datasets/Tripadvisor Review Part1.xlsx')
 
 neededColumn = df ['Hotel Address']
 neededColumn2 = urllib.parse.urlencode(neededColumn)
-print(neededColumn2)
+#print(neededColumn2)
 #print(df['Hotel Address'])
+
+# First get the each needed rows and print it
+for neededColumnrow in neededColumn:
+    print(neededColumnrow)
