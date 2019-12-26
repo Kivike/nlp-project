@@ -1,23 +1,16 @@
 from pandas import DataFrame
 import plotly.graph_objects as go
 from enum import Enum
+from app.map.heat_map import MapboxStyle
+from typing import List
 
-class MapboxStyle(Enum):
-    """Enum value for mapbox styles.
-    """
-    STAMEN_TERRAIN = "stamen-terrain"
-    OPEN_STREET_MAP = "open-street-map"
-    DARK = "dark"
-    CARTO_POSITRON = "carto-positron"
-
-class HeatMap:
-    """Simple browser-based heat map. Uses Plotly Python API for launching the plot.
-    See the [demo](https://plot.ly/python/mapbox-density-heatmaps/) and 
-    [Densitymapbox docs](https://plot.ly/python/reference/#densitymapbox) online.
+class ChoroMap:
+    """Simple browser-based choropleth map. Uses Plotly Python API for launching the plot.
+    See the [demo](https://plot.ly/python/mapbox-county-choropleth/).
 
     Arguments:
 
-        data {DataFrame} -- The data to be plotted
+        geojson -- The geojson data respective to location and z parameters
 
     Keyword Arguments:
 
@@ -32,29 +25,29 @@ class HeatMap:
         heat_map.show()
     """
 
-    LAT = 'Latitude'
-    LON = 'Longitude'
-
     def __init__(
         self,
-        data: DataFrame,
-        radius: int = 10,
-        style: MapboxStyle = MapboxStyle.STAMEN_TERRAIN,
+        geojson,
+        locations: List[str] = None,
+        z: List[float] = None,
+        style: MapboxStyle = MapboxStyle.CARTO_POSITRON,
         access_token: str = None):
 
-        assert self.LAT in data.columns, 'Data has to contain column {}'.format(self.LAT)
-        assert self.LON in data.columns, 'Data has to contain column {}'.format(self.LON)
-
+        assert locations is not None, 'Please provide the list of locations'
+        assert z is not None, 'Please provide the list of z-values'
         if style == MapboxStyle.DARK:
             assert access_token is not None, 'Access token has to be ' + \
                                             'provided for dark mapbox tiles'
 
-        self.data = data
+        self.geojson = geojson
         self.fig = go.Figure(
-            go.Densitymapbox(
-                lat = data[self.LAT],
-                lon = data[self.LON],
-                radius = radius
+            go.Choroplethmapbox(
+                geojson=geojson,
+                locations=locations,
+                z=z,
+                colorscale="Viridis",
+                zmin=min(z),
+                zmax=max(z)
             )
         )
         self.style = style
@@ -65,20 +58,11 @@ class HeatMap:
         passed down to `self.fig.update_layout` call before the figure is shown.
         """
 
-        min_lat = self.data[self.LAT].min()
-        max_lat = self.data[self.LAT].max()
-        min_lon = self.data[self.LON].min()
-        max_lon = self.data[self.LON].max()
-
-        avg_lat = min_lat + (max_lat - min_lat) / 2
-        avg_lon = min_lon + (max_lon - min_lon) / 2
         # TODO: Is it possible to calculate the zoom properly?
         zoom = 6
 
         self.fig.update_layout(
             mapbox_style = self.style.value,
-            mapbox_center_lat = avg_lat,
-            mapbox_center_lon = avg_lon,
             mapbox_zoom = zoom,
             margin = {
                 "r": 0,
