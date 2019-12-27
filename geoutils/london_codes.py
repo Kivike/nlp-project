@@ -20,7 +20,10 @@ Data can be sourced from https://datashare.is.ed.ac.uk/handle/10283/2597
 Example usage:
 python ../../geoutils/london_codes.py PostalArea.geojson --out ../geojson/london/PostalArea.geojson
 """
-LONDON_AREA = [ "E", "EC", "N", "NW", "SE", "SW", "W", "WC" ]
+CODES_LONDON_AREA_INNER = [ "E", "EC", "N", "NW", "SE", "SW", "W", "WC" ]
+CODES_LONDON_AREA_OUTER = [ "BR", "CR", "DA", "EN", "HA", "IG", "SL", "TN", "KT", "RM", "SM", "TW", "UB", "WD"]
+CODES_LONDON_AREA_ALL = CODES_LONDON_AREA_INNER + CODES_LONDON_AREA_OUTER
+
 
 parser = argparse.ArgumentParser(
     description='Filter out areas from GeoJSON file with London area post codes'
@@ -72,7 +75,7 @@ features = []
 
 for feature in geojson['features']:
     post_area = feature['properties']['PostArea']
-    if post_area in LONDON_AREA:
+    if post_area in CODES_LONDON_AREA_ALL:
         feature['id'] = feature['properties'][property_id]
         features.append(feature)
 
