@@ -6,7 +6,7 @@ from app.map.constants import GJSON_LONDON_DISTRICTS
 from app.file.utils import get_absolute_path
 
 """Example:
-python chronomap.py --data "datasets/Hotel_reviews_NLP/Tripadvisor Review Part1.xlsx"
+python choromap.py --data "datasets/Hotel_reviews_NLP/Tripadvisor Review Part1.xlsx"
 """
 
 
