@@ -18,25 +18,47 @@ Data can be sourced from https://datashare.is.ed.ac.uk/handle/10283/2597
             * See examples -directory for the shapes of features
 
 Example usage:
-python ../../geoutils/london_codes.py --in PostalArea.geojson --out ../geojson/london/PostalArea.geojson
+python ../../geoutils/london_codes.py PostalArea.geojson --out ../geojson/london/PostalArea.geojson
 """
 LONDON_AREA = [ "E", "EC", "N", "NW", "SE", "SW", "W", "WC" ]
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--in', metavar='I', nargs='?')
-parser.add_argument('--out', metavar='O', nargs='?')
+parser = argparse.ArgumentParser(
+    description='Filter out areas from GeoJSON file with London area post codes'
+)
+parser.add_argument('input', metavar='F', type=str, nargs='?', help='Path to the input GeoJSON file')
+parser.add_argument(
+    '--out',
+    metavar='O',
+    type=str,
+    nargs='?',
+    default='output.geojson',
+    help='Path to the output GeoJSON file'
+)
+parser.add_argument(
+    '--id',
+    metavar='I',
+    type=str,
+    nargs='?',
+    default='PostArea',
+    help='The property name to pick from feature.properties and set as feature.id'
+)
 
 args = parser.parse_args()
 
-geojson_file = args.geojson if args.geojson else None
+geojson_file = args.input if args.input else None
 output = args.out if args.out else None
+property_id = args.id if args.id else None
 
 if geojson_file is None:
-    print("Give the GeoJSON file as --in argument")
+    print("Please give proper input file as first positional argument")
     exit(1)
 
 if output is None:
     print("Give the output file as --out argument")
+    exit(1)
+
+if property_id is None:
+    print("Give id property name --id argument")
     exit(1)
 
 with open(geojson_file) as json_file:
@@ -51,9 +73,11 @@ features = []
 for feature in geojson['features']:
     post_area = feature['properties']['PostArea']
     if post_area in LONDON_AREA:
+        feature['id'] = feature['properties'][property_id]
         features.append(feature)
 
 parsed['features'] = features
+
 print("{} features found".format(len(features)))
 print("Saving JSON to {}".format(output))
 
