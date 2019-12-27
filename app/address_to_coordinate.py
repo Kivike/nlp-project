@@ -59,6 +59,6 @@ for neededColumnrow in df:
 #    return value
 # Encode the URL
 
-                encodedURL = urllib.parse.quote_plus(neededColumnrow)
+                encodedURL = urllib.parse.quote_plus(str(neededColumnrow))
 #    encodedURL = urllib.parse.quote_from_bytes(neededColumnrow)
                 print(encodedURL)
