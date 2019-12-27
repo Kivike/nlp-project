@@ -6,6 +6,9 @@
 # cd <directory-on-host-with-shp-files>
 # sh ../<path-to-this-script>/ogr2ogr.sh -f GeoJSON -t_srs crs:84 [name].geojson [name].shp
 # 
+# Actual example:
+# sh ../../geoutils/ogr2ogr.sh -f GeoJSON -t_srs crs:84 PostalSector.geojson PostalSector.shp
+# 
 # Any arguments being passed to the script will be passed to the ogr2ogr tool on the container.
 # Use --help command for help (or --long-usage for full help)
 
