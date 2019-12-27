@@ -5,7 +5,7 @@ import numpy as np
 import pyexcel as pe
 from pandas import ExcelWriter
 from pandas import ExcelFile
-
+from urllib.parse import urljoin
 
 df = pd.read_excel('../datasets/Tripadvisor Review Part1.xlsx')
 
@@ -61,4 +61,28 @@ for neededColumnrow in df:
 
                 encodedURL = urllib.parse.quote_plus(str(neededColumnrow))
 #    encodedURL = urllib.parse.quote_from_bytes(neededColumnrow)
-                print(encodedURL)
+#                print(encodedURL)
+
+# API call
+# https://nominatim.openstreetmap.org/search?q= 153+Hammersmith+Road,+london &format=xml&polygon=1&addressdetails=0
+# https://nominatim.openstreetmap.org/         50+Norfolk+Square &format=xml&polygon=1&addressdetails=0
+                baseUrl = 'https://nominatim.openstreetmap.org'
+                suffix =  '/search?q=' + encodedURL + '&format=xml&polygon=1&addressdetails=0'
+#for newApiUrl in encodedURL:
+#addition = encodedURL
+#print(addition)
+#url = urljoin(baseUrl, encodedURL)
+#print(url)
+
+#def get_url(self, word: str):
+
+#    suffix = []
+#    antonyms = []
+
+
+                api = urljoin(baseUrl, suffix)
+                print(api)
+ #   return suffix
+
+#print(get_url())
+
