@@ -2,7 +2,7 @@ import argparse
 import json
 
 """
-A script that takes input GeoJSON file (--geojson arg), and filters out all features that are not
+A script that takes input GeoJSON file (--in arg), and filters out all features that are not
 in London area. The output file can be specified as --out argument. This is strictly data-specific;
 GeoJSON features are expected to contain key `PostArea` in properties. See more details from where
 the data can be sourced.
@@ -18,12 +18,12 @@ Data can be sourced from https://datashare.is.ed.ac.uk/handle/10283/2597
             * See examples -directory for the shapes of features
 
 Example usage:
-python ../../geoutils/london_codes.py --geojson PostalArea.geojson --out ../geojson/london/PostalArea.geojson
+python ../../geoutils/london_codes.py --in PostalArea.geojson --out ../geojson/london/PostalArea.geojson
 """
 LONDON_AREA = [ "E", "EC", "N", "NW", "SE", "SW", "W", "WC" ]
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--geojson', metavar='G', nargs='?')
+parser.add_argument('--in', metavar='I', nargs='?')
 parser.add_argument('--out', metavar='O', nargs='?')
 
 args = parser.parse_args()
@@ -32,7 +32,7 @@ geojson_file = args.geojson if args.geojson else None
 output = args.out if args.out else None
 
 if geojson_file is None:
-    print("Give the GeoJSON file as --geojson argument")
+    print("Give the GeoJSON file as --in argument")
     exit(1)
 
 if output is None:
