@@ -12,7 +12,7 @@ python choromap.py --data "datasets/Hotel_reviews_NLP/Tripadvisor Review Part1.x
 
 # TODO: Provide two datasets, and render them both with different colors?
 parser = argparse.ArgumentParser(
-    description='Render a chrono map using Plotly and provided postal code data of London area'
+    description='Render a choropleth map using Plotly and provided postal code data of London area'
 )
 parser.add_argument(
     '--data',
