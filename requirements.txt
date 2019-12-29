@@ -11,3 +11,4 @@ numpy==1.17.4
 openpyxl==3.0.2
 pyexcel==0.5.15
 pyexcel-sortable==0.0.2
+requests==2.22.0

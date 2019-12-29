@@ -1,11 +1,14 @@
 import pandas as pd
 import urllib
 import urllib.parse
+import requests
+import json
 import numpy as np
 import pyexcel as pe
 from pandas import ExcelWriter
 from pandas import ExcelFile
 from urllib.parse import urljoin
+from urllib.parse import parse_qs
 
 df = pd.read_excel('../datasets/Tripadvisor Review Part1.xlsx')
 
@@ -64,7 +67,7 @@ for neededColumnrow in df:
 #                print(encodedURL)
 
 # API call
-# https://nominatim.openstreetmap.org/search?q= 153+Hammersmith+Road,+london &format=xml&polygon=1&addressdetails=0
+# https://nominatim.openstreetmap.org/search?q=153+Hammersmith+Road,+london &format=xml&polygon=1&addressdetails=0
 # https://nominatim.openstreetmap.org/         50+Norfolk+Square &format=xml&polygon=1&addressdetails=0
                 baseUrl = 'https://nominatim.openstreetmap.org'
                 suffix =  '/search?q=' + encodedURL + '&format=xml&polygon=1&addressdetails=0'
@@ -81,8 +84,24 @@ for neededColumnrow in df:
 
 
                 api = urljoin(baseUrl, suffix)
-                print(api)
+#                print(api)
  #   return suffix
 
 #print(get_url())
 
+# make an api call
+# testing first with 1 api requests
+r = requests.get('https://nominatim.openstreetmap.org/search?q=153+Hammersmith+Road,+london &format=json&polygon=1&addressdetails=0')
+#print(r.json())
+#r.json()
+
+result = r.json()
+jsonData = []
+
+for data in result:
+    lattitude = data['lat']
+    longitude = data['lon']
+    jsonData.append(lattitude)
+    jsonData.append(longitude)
+
+print(jsonData)
