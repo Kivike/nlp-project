@@ -26,15 +26,10 @@ class SentimentExtractor:
         
         for word in words:
             synonyms, antonyms = self.get_synonyms(word)
-
             # TODO: Word stemming (homicide => homicid)
-            for syn in synonyms:
-                if syn not in all_synonyms:
-                    all_synonyms.append(syn)
 
-            for ant in antonyms:
-                if ant not in all_antonyms:
-                    all_antonyms.append(ant)
+            all_synonyms.extend([s for s in synonyms if s not in all_synonyms])
+            all_antonyms.extend([a for a in antonyms if a not in all_antonyms])
 
         content = review['Review Content']
 
@@ -75,6 +70,7 @@ class SentimentExtractor:
                         for antonym in lemma.antonyms():
                             if antonym.name() not in antonyms:
                                 antonyms.append(antonym.name())
+
             self.synon_cache[word]['synonyms'] = synonyms
             self.synon_cache[word]['antonyms'] = antonyms
 
