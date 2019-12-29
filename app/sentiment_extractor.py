@@ -5,7 +5,9 @@ import numpy as np
 nltk.download('wordnet')
 
 class SentimentExtractor:
-    def extract_feature(self, review: dict, word: str, sentiment: -1):
+    synon_cache = {}
+
+    def extract_feature(self, review: dict, words: list, sentiment: -1):
         """
         Extract sentiment based on given word
         Also uses synonyms and antonyms of selected word
@@ -18,18 +20,34 @@ class SentimentExtractor:
             antonyms will be given the opposite value
         """
         value = 0
-        synonyms, antonyms = self.get_synonyms(word)
+
+        all_synonyms = []
+        all_antonyms = []
+        
+        for word in words:
+            synonyms, antonyms = self.get_synonyms(word)
+
+            # TODO: Word stemming (homicide => homicid)
+            for syn in synonyms:
+                if syn not in all_synonyms:
+                    all_synonyms.append(syn)
+
+            for ant in antonyms:
+                if ant not in all_antonyms:
+                    all_antonyms.append(ant)
 
         content = review['Review Content']
 
-        if content is not np.nan:
-            for synonym in synonyms:
+        if isinstance(content, str):
+            content = self.preprocess(content)
+
+            for synonym in all_synonyms:
                 if 'not ' + synonym in content:
                     value -= sentiment
                 elif synonym in content:
                     value += sentiment
 
-            for antonym in antonyms:
+            for antonym in all_antonyms:
                 if 'not ' + antonym in content:
                     value += sentiment
                 elif antonym in content:
@@ -37,18 +55,34 @@ class SentimentExtractor:
 
         return value
 
+    def preprocess(self, content: str):
+        return content.lower()
+
     def get_synonyms(self, word: str):
-        synonyms = []
-        antonyms = []
+        if word in self.synon_cache:
+            synonyms = self.synon_cache[word]['synonyms']
+            antonyms = self.synon_cache[word]['antonyms']
+        else:
+            self.synon_cache[word] = {}
+            synonyms = []
+            antonyms = []
 
-        for synset in wordnet.synsets(word):
-            for lemma in synset.lemmas():
-                if lemma.name() not in synonyms:
-                    synonyms.append(lemma.name())
+            for synset in wordnet.synsets(word):
+                for lemma in synset.lemmas():
+                    if lemma.name() not in synonyms:
+                        synonyms.append(lemma.name())
 
-                    for antonym in lemma.antonyms():
-                        if antonym.name() not in antonyms:
-                            antonyms.append(antonym.name())
+                        for antonym in lemma.antonyms():
+                            if antonym.name() not in antonyms:
+                                antonyms.append(antonym.name())
+            self.synon_cache[word]['synonyms'] = synonyms
+            self.synon_cache[word]['antonyms'] = antonyms
+
+            if len(synonyms):
+                print('Synonyms for %s: %s' % (word, synonyms))
+
+            if len(antonyms):
+                print('Antonyms for %s: %s' % (word, antonyms))
 
         return synonyms, antonyms
         

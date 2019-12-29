@@ -1,11 +1,45 @@
 from app.sentiment_extractor import SentimentExtractor
+from app.sentiment_feature import SentimentFeature
+
 from app.file.utils import get_absolute_path
 import pandas
 import os
 
 class FileSentimentExtractor:
 
-    def process_file(self, file_path, save):
+    FEATURES = {
+        SentimentFeature(
+            'unsafe',
+            ['unsafe'],
+            -1
+        ),
+        SentimentFeature(
+            'positive',
+            ['positive', 'good', 'nice', 'great', 'wonderful', 'perfect'],
+            1
+        ),
+        SentimentFeature(
+            'crime',
+            [
+                'crime',
+                'arson',
+                'assault',
+                'bribe',
+                'burglar',
+                'fraud',
+                'homicide',
+                'manslaughter', 
+                'murder',
+                'rape',
+                'robbery',
+                'shoplift',
+                'trespassing'
+            ],
+            -1
+        )
+    }
+
+    def process_file(self, file_path, save, output_file):
         """
         Extract sentiment features from file
 
@@ -14,6 +48,9 @@ class FileSentimentExtractor:
         file_path -- Excel file path, absolute or relative to caller
         save -- If set, feature is saved to the file
         """
+        if output_file is None:
+            output_file = file_path
+
         file_path = get_absolute_path(file_path)
 
         if not os.path.isfile(file_path):
@@ -26,25 +63,35 @@ class FileSentimentExtractor:
 
         print("Reading file " + file_path)
         data = pandas.read_excel(file_path)
-        self.extract_file_word(data, 'unsafe')
+        self.extract_all_words(data)
 
         if save:
-            print("Saving features to file")
-            data.to_excel(file_path)
+            print("Saving features to file " + output_file)
+            data.to_excel(output_file)
     
-    def extract_file_word(self, data: pandas.DataFrame, word: str):
-        print("Extract sentiment feature for word " + word)
-        feature_name = 'feature_word_' + word
+    def extract_all_words(self, data: pandas.DataFrame):
+        """
+        Extract all sentiment features for given DataFrame
+        """
+        for feature in self.FEATURES:
+            self.extract_feature(data, feature)
 
-        extractor = SentimentExtractor()
+    def extract_feature(self, data: pandas.DataFrame, feature: SentimentFeature):
+        """
+        Extract feature for all rows in given DataFrame
+        """
+        feature_name = 'feature_word_' + feature.name
+        print("Extract sentiment feature for %s with words %s" % (feature_name, feature.words))
+
         feature_count = 0
+        extractor = SentimentExtractor()
 
         for index, review in data.iterrows():
-            feature_value = extractor.extract_feature(review, word, -1)
+            feature_value = extractor.extract_feature(review, feature.words, -1)
+            
+            if feature_value != 0:
+                feature_count += 1
+                
             data.loc[data.index[index], feature_name] = feature_value
 
-            if data.at[index, feature_name] != 0:
-                feature_count += 1
-                print("%d: %d %d" % (index, feature_count, data.at[index, feature_name]))
-
-        print('Found %d features from %d rows' % (feature_count, index))
+        print('Found %d features of %s from %d rows' % (feature_count, feature_name, index))
