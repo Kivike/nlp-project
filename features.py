@@ -9,16 +9,15 @@ python features.py --hotel-data "datasets/Tripadvisor Review Part1.xlsx" --save
 parser = argparse.ArgumentParser()
 #parser.add_argument('--crime-data', metavar='C', nargs='?')
 parser.add_argument('--hotel-data', metavar='H', nargs='?')
-parser.add_argument('--save', action='store_true')
-parser.add_argument('--output-file', metavar='O', nargs='?')
+parser.add_argument('--save', action='store', const=True, nargs='?')
 
 args = parser.parse_args()
 
-save_to_file = args.save if args.save else False
+output_file = args.save if args.save else False
 
 if args.hotel_data:
     sent_ext = FileSentimentExtractor()
-    sent_ext.process_file(args.hotel_data, save_to_file, args.output_file)
+    sent_ext.process_file(args.hotel_data, output_file)
 else:
     print("Nothing to do")
     
