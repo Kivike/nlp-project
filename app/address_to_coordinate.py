@@ -2,6 +2,8 @@ import pandas as pd
 import urllib
 import urllib.parse
 import requests
+import xlsxwriter
+import xlrd
 import json
 import numpy as np
 import pyexcel as pe
@@ -11,14 +13,19 @@ from urllib.parse import urljoin
 from urllib.parse import parse_qs
 
 df = pd.read_excel('../datasets/Tripadvisor Review Part1.xlsx')
-
+#print(df.drop_duplicates(subset=['hotel_address']))
 # read in dataframe with parse_cols
 # use a list to read in specific columns, even if only one column
 # use 1 instead of 2 since Python is zero indexed
 
 
 #df = df.loc[df ['Hotel Address'].isnull(), :]
+df = df.drop_duplicates(subset='Hotel Address')
+#testdf = df.drop_duplicates(subset='Hotel Address').shape
+#print(testdf)
 df = df['Hotel Address']
+#df = df.drop_duplicates(subset=['Hotel Address'])
+#print(df)
 #filtered_df = df[df['Hotel Address'].notnull()]
 #df.dropna(subset=['Hotel Address'], inplace=True)
 #print(df)
@@ -32,6 +39,52 @@ df = df['Hotel Address']
 # filter empty
 #neededColumn['Hotel Address'].replace('', np.nan, inplace=True)
 #neededColumn.dropna(subset=['Hotel Address'], inplace=True)
+
+# filter unique
+
+#def remove_duplicates():
+
+#read_file = xlrd.open_workbook('../datasets/Tripadvisor Review Part1.xlsx')
+#write_file = xlsxwriter.Workbook ('../datasets/Tripadvisor Review Part9.xlsx')
+
+#for sheet in read_file.sheets():
+#    no_rows = sheet.nrows
+#    no_cols = sheet.ncols
+#    name = sheet.name
+#    gen_sheets = write_file.add_worksheet(name)
+#    line_list = []
+#    r = 0
+#    for row in range(0, no_rows):
+#        line_sublist = [sheet.cell(row, col).value for col in range(0, no_cols)]
+#        if line_sublist not in line_list:
+#            line_list.append(line_sublist)
+#            for col in range(0, no_cols):
+#            gen_sheets.write(r,col,line_sublist[col])
+#            r = r + 1
+#write_file.close()
+
+#def validateExcel(filename):
+
+#xls=xlrd.open_workbook('../datasets/Tripadvisor Review Part1.xlsx')
+#write_file = xlsxwriter.Workbook ('../datasets/Tripadvisor Review Part8.xlsx')
+#for sheet in xls.sheets():
+#    header=""
+
+#    number_of_rows = sheet.nrows
+ #   number_of_cols = sheet.ncols
+#    sheetname = sheet.name
+
+#    mylist = []
+
+#    for row in range (1, number_of_rows):
+#        sublist = [sheet.cell_value(row, col) for col in range(0, number_of_cols)]
+
+#        if sublist not in mylist:
+#            mylist.append(sublist)
+
+#        print(mylist)
+#write_file.close()
+
 
 
 #neededColumn = neededColumn.drop(neededColumn.index[neededColumn.eq('')]) #drop all null rows
@@ -70,7 +123,7 @@ for neededColumnrow in df:
 # https://nominatim.openstreetmap.org/search?q=153+Hammersmith+Road,+london &format=xml&polygon=1&addressdetails=0
 # https://nominatim.openstreetmap.org/         50+Norfolk+Square &format=xml&polygon=1&addressdetails=0
                 baseUrl = 'https://nominatim.openstreetmap.org'
-                suffix =  '/search?q=' + encodedURL + '&format=xml&polygon=1&addressdetails=0'
+                suffix =  '/search?q=' + encodedURL + '&format=json&polygon=1&addressdetails=0'
 #for newApiUrl in encodedURL:
 #addition = encodedURL
 #print(addition)
@@ -104,4 +157,5 @@ for data in result:
     jsonData.append(lattitude)
     jsonData.append(longitude)
 
-print(jsonData)
+#print(jsonData)
+
