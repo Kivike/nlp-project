@@ -8,6 +8,7 @@ class MapboxStyle(Enum):
     STAMEN_TERRAIN = "stamen-terrain"
     OPEN_STREET_MAP = "open-street-map"
     DARK = "dark"
+    CARTO_POSITRON = "carto-positron"
 
 class HeatMap:
     """Simple browser-based heat map. Uses Plotly Python API for launching the plot.
