@@ -6,6 +6,10 @@ nltk.download('wordnet')
 
 class SentimentExtractor:
     synon_cache = {}
+    stemmer = None
+
+    def __init__(self):
+        self.stemmer = nltk.PorterStemmer()
 
     def extract_feature(self, review: dict, words: list, sentiment: -1):
         """
@@ -26,7 +30,9 @@ class SentimentExtractor:
         
         for word in words:
             synonyms, antonyms = self.get_synonyms(word)
-            # TODO: Word stemming (homicide => homicid)
+
+            synonyms = [self.stemmer.stem(s) for s in synonyms]
+            antonyms = [self.stemmer.stem(a) for a in antonyms]
 
             all_synonyms.extend([s for s in synonyms if s not in all_synonyms])
             all_antonyms.extend([a for a in antonyms if a not in all_antonyms])
@@ -74,11 +80,11 @@ class SentimentExtractor:
             self.synon_cache[word]['synonyms'] = synonyms
             self.synon_cache[word]['antonyms'] = antonyms
 
-            if len(synonyms):
-                print('Synonyms for %s: %s' % (word, synonyms))
+            #if len(synonyms):
+            #    print('Synonyms for %s: %s' % (word, synonyms))
 
-            if len(antonyms):
-                print('Antonyms for %s: %s' % (word, antonyms))
+            #if len(antonyms):
+            #    print('Antonyms for %s: %s' % (word, antonyms))
 
         return synonyms, antonyms
         

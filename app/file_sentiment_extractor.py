@@ -33,7 +33,8 @@ class FileSentimentExtractor:
                 'rape',
                 'robbery',
                 'shoplift',
-                'trespassing'
+                'trespassing',
+                'gang'
             ],
             -1
         )
@@ -84,6 +85,8 @@ class FileSentimentExtractor:
         print("Extract sentiment feature for %s with words %s" % (feature_name, feature.words))
 
         feature_count = 0
+        feature_total_value = 0
+
         extractor = SentimentExtractor()
 
         for index, review in data.iterrows():
@@ -91,7 +94,8 @@ class FileSentimentExtractor:
             
             if feature_value != 0:
                 feature_count += 1
-                
+                feature_total_value += abs(feature_value)
+
             data.loc[data.index[index], feature_name] = feature_value
 
-        print('Found %d features of %s from %d rows' % (feature_count, feature_name, index))
+        print('Found %d features of %s from %d rows' % (feature_total_value, feature_name, index))
