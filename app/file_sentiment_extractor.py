@@ -1,7 +1,6 @@
 from app.sentiment_extractor import SentimentExtractor
 from app.sentiment_feature import SentimentFeature
-
-from app.file.utils import get_absolute_path
+from app.file.utils import read_csv_directory, get_absolute_path
 import pandas
 import os
 
@@ -56,16 +55,16 @@ class FileSentimentExtractor:
 
         file_path = get_absolute_path(file_path)
 
-        if not os.path.isfile(file_path):
+        if os.path.isfile(file_path):
+            print("Reading file " + file_path)
+            data = pandas.read_excel(file_path)
+
+        elif os.path.isdir(file_path):
+            data = read_csv_directory(file_path, filetype = 'xlsx')
+        else:
             print ("%s is not a valid file path" % file_path)
             return
 
-        if not file_path.endswith('.xlsx'):
-            print ("Not a valid Excel file")
-            return
-
-        print("Reading file " + file_path)
-        data = pandas.read_excel(file_path)
         self.extract_all_words(data)
         self.sum_features(data)
 
