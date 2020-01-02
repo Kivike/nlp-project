@@ -2,6 +2,7 @@ import pandas as pd
 import urllib
 import urllib.parse
 import requests
+import time
 import xlsxwriter
 import xlrd
 import json
@@ -137,7 +138,8 @@ for neededColumnrow in df:
 
 
                 api = urljoin(baseUrl, suffix)
-#                print(api)
+                time.sleep(1)
+                print(api)
  #   return suffix
 
 #print(get_url())
