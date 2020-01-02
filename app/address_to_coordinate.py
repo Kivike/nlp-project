@@ -139,25 +139,26 @@ for neededColumnrow in df:
 
                 api = urljoin(baseUrl, suffix)
                 time.sleep(1)
-                print(api)
+#                print(api)
  #   return suffix
 
 #print(get_url())
 
 # make an api call
 # testing first with 1 api requests
-r = requests.get('https://nominatim.openstreetmap.org/search?q=153+Hammersmith+Road,+london &format=json&polygon=1&addressdetails=0')
+#r = requests.get('https://nominatim.openstreetmap.org/search?q=153+Hammersmith+Road,+london &format=json&polygon=1&addressdetails=0')
+                r = requests.get(api)
 #print(r.json())
 #r.json()
 
-result = r.json()
-jsonData = []
+                result = r.json()
+                jsonData = []
 
-for data in result:
-    lattitude = data['lat']
-    longitude = data['lon']
-    jsonData.append(lattitude)
-    jsonData.append(longitude)
+                for data in result:
+                    lattitude = data['lat']
+                    longitude = data['lon']
+                    jsonData.append(lattitude)
+                    jsonData.append(longitude)
 
-#print(jsonData)
+                print(jsonData)
 
