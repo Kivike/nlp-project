@@ -9,7 +9,7 @@ class FileSentimentExtractor:
     FEATURES = {
         SentimentFeature(
             'sentiment_unsafe',
-            ['unsafe'],
+            ['unsafe', 'alarming', 'untrustworthy', 'scary', 'risky', 'uncertain', 'unreliable'],
             -1
         ),
         SentimentFeature(
