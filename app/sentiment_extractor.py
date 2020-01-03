@@ -1,8 +1,11 @@
 from nltk.corpus import wordnet
 import nltk
+from nltk.tokenize import word_tokenize
 import numpy as np
 
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
 
 class SentimentExtractor:
     synon_cache = {}
@@ -11,7 +14,7 @@ class SentimentExtractor:
     def __init__(self):
         self.stemmer = nltk.PorterStemmer()
 
-    def extract_feature(self, review: dict, words: list, sentiment: -1):
+    def extract_feature(self, review: dict, words: list, sentiment: -1) -> float:
         """
         Extract sentiment based on given word
         Also uses synonyms and antonyms of selected word
@@ -34,32 +37,62 @@ class SentimentExtractor:
             synonyms = [self.stemmer.stem(s) for s in synonyms]
             antonyms = [self.stemmer.stem(a) for a in antonyms]
 
-            all_synonyms.extend([s for s in synonyms if s not in all_synonyms])
-            all_antonyms.extend([a for a in antonyms if a not in all_antonyms])
+            for s in synonyms:
+                if s not in all_synonyms:
+                    all_synonyms.append(s)
+                    all_antonyms.append('not ' + s)
+
+            for a in antonyms:
+                if a not in all_antonyms:
+                    all_antonyms.append(a)
+                    all_synonyms.append('not ' + a)
 
         content = review['Review Content']
 
         if isinstance(content, str):
-            content = self.preprocess(content)
+            words = self.get_relevant_words(content)
 
-            for synonym in all_synonyms:
-                if 'not ' + synonym in content:
-                    value -= sentiment
-                elif synonym in content:
-                    value += sentiment
+            for word in words:
+                for synonym in all_synonyms:
+                    if word.startswith(synonym):
+                        value += sentiment
+                        break
+                else:
+                    for antonym in all_antonyms:
+                        if word.startswith(antonym):
+                            value -= sentiment
+                            break
 
-            for antonym in all_antonyms:
-                if 'not ' + antonym in content:
-                    value += sentiment
-                elif antonym in content:
-                    value -= sentiment
+            return value / len(words)
+        else:
+            return 0
 
-        return value
+    def get_relevant_words(self, content: str) -> List[str]:
+        """
+        Get list of relevant words in the review content
+        Only keeps nouns, adjectives, and verbs
+        """
+        tokenized = word_tokenize(content.lower())
+        pos_words = nltk.pos_tag(tokenized)
 
-    def preprocess(self, content: str):
-        return content.lower()
+        relevant_words = []
+
+        for i in range(0, len(pos_words)):
+            word, pos_tag = pos_words[i]
+
+            if pos_tag.startswith(('NN', 'JJ', 'VB')):
+                # Add 'not' from previous word to the word it is referring to
+                if i > 0 and pos_words[i - 1][0] == 'not':
+                    word = 'not ' + word
+
+                relevant_words.append(word)
+
+        return relevant_words
 
     def get_synonyms(self, word: str):
+        """
+        Get synonyms and antonyms of a word from WordNet
+        """
         if word in self.synon_cache:
             synonyms = self.synon_cache[word]['synonyms']
             antonyms = self.synon_cache[word]['antonyms']
