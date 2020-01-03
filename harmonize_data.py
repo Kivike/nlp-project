@@ -14,7 +14,7 @@ from app.time.period import Period
 CRIME_DATA_DIR = os.path.join(os.path.dirname(__file__), 'datasets/metropolitan-street')
 # HOTEL_DATA_DIR = os.path.join(os.path.dirname(__file__), 'datasets/Hotel_reviews_NLP')
 HOTEL_DATA_INPUT = os.path.join(os.path.dirname(__file__), 'datasets/tripadvisor_output.xlsx')
-OUT_DIR = os.path.join(os.path.dirname(__file__), 'datasets/out/')
+OUT_DIR = os.path.join(os.path.dirname(__file__), 'datasets/')
 FINAL_DATA_OUTPUT = 'final_data_avg.csv' # Use average values in the final output, thus _avg ending
 SECTORIZED_HOTEL_DATA = 'hotel_reviews_sectorized.csv'
 SECTORIZED_CRIME_DATA = 'crimes_sectorized.csv'

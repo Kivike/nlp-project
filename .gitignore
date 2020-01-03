@@ -130,7 +130,9 @@ dmypy.json
 
 ### Own additions
 .vscode
-datasets/
+datasets/*
+!datasets/final_data_avg.csv
+!datasets/tripadvisor_output.xlsx
 .DS_Store
 
 # IDE exception
