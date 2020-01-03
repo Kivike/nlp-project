@@ -15,7 +15,7 @@ CRIME_DATA_DIR = os.path.join(os.path.dirname(__file__), 'datasets/metropolitan-
 # HOTEL_DATA_DIR = os.path.join(os.path.dirname(__file__), 'datasets/Hotel_reviews_NLP')
 HOTEL_DATA_INPUT = os.path.join(os.path.dirname(__file__), 'datasets/tripadvisor_output.xlsx')
 OUT_DIR = os.path.join(os.path.dirname(__file__), 'datasets/out/')
-FINAL_DATA_OUTPUT = 'final_data.csv'
+FINAL_DATA_OUTPUT = 'final_data_avg.csv' # Use average values in the final output, thus _avg ending
 SECTORIZED_HOTEL_DATA = 'hotel_reviews_sectorized.csv'
 SECTORIZED_CRIME_DATA = 'crimes_sectorized.csv'
 CPU_COUNT = mp.cpu_count()
@@ -231,7 +231,7 @@ def main():
         areas[feature['id']] = area(feature['geometry'])
 
     period.end()
-    print('Calculated areas in {}'.format(period))
+    print('Calculated areas in {}\n'.format(period))
 
     ######################
     # Step 6: Combine data
@@ -251,10 +251,10 @@ def main():
 
     # The final data
     df = (counts
-        .join(hgb.agg({ 'sentiment_unsafe': 'sum' }))
-        .join(hgb.agg({ 'sentiment_crime': 'sum' }))
-        .join(hgb.agg({ 'sentiment_positive': 'sum' }))
-        .join(hgb.agg({ 'sentiment_sum': 'sum' }))
+        .join(hgb.agg({ 'sentiment_unsafe': 'mean' }))
+        .join(hgb.agg({ 'sentiment_crime': 'mean' }))
+        .join(hgb.agg({ 'sentiment_positive': 'mean' }))
+        .join(hgb.agg({ 'sentiment_sum': 'mean' }))
         .reset_index()) # type: pd.DataFrame
 
     # Add area per sector
