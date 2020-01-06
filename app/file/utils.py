@@ -21,11 +21,14 @@ def read_csv_directory(
         columns {List[str]} -- The columns to include into the combined data (default: {None})
 
         filelimit {int} -- The limit of files to read (default: {None})
+
+        filetype {str} -- The file type, either 'csv' or 'xlsx' (default: {'csv'})
     
     Returns:
 
         DataFrame -- The data combined into a single DataFrame
     """
+
     assert filetype in ['csv', 'xlsx'], 'File type must be csv or xlsx'
 
     files = glob.glob(directory + '/*.' + filetype)

@@ -2,11 +2,11 @@ import argparse
 from os import path
 import pandas as pd
 from app.map.choro_map import ChoroMap
-from app.map.constants import GJSON_LONDON_DISTRICTS
+from app.map.constants import GJSON_LONDON_SECTORS
 from app.file.utils import get_absolute_path
 
 """Example:
-python choromap.py --data "datasets/Hotel_reviews_NLP/Tripadvisor Review Part1.xlsx"
+python choromap.py --data datasets/final_data_avg.csv --feature sentiment_crime
 """
 
 
@@ -21,12 +21,33 @@ parser.add_argument(
     help='Path to the xlsx or csv file containing data with ZIP column'
 )
 
+parser.add_argument(
+    '--feature',
+    metavar='F',
+    nargs='?',
+    help='Feature to use for "magnitude" of the area'
+)
+
+parser.add_argument(
+    '--area-column',
+    metavar='AC',
+    nargs='?',
+    help='Data column name for the areas, e.g. "sector"',
+    default='sector'
+)
+
 args = parser.parse_args()
 filename = args.data if args.data else None
+feature = args.feature if args.feature else None
+area_column = args.area_column
 
 if filename is None:
     print("Please specify the file location as --data argument")
     exit(1)
+if feature is None:
+    print("Please specify the feature for magnitude as --feature argument")
+    exit(1)
+
 
 try:
     filepath = get_absolute_path(filename)
@@ -40,15 +61,13 @@ try:
     else:
         df = pd.read_excel(filepath)
     
-    df = df[df['ZIP'].notnull()]
-    df['district'] = df.apply(lambda row: row['ZIP'].split()[0], axis=1)
-    post_areas = df['district'].value_counts()
-
+    areas = df[area_column]
+    z = df[feature]
 
     choromap = ChoroMap(
-        geojson=GJSON_LONDON_DISTRICTS,
-        locations=post_areas.keys(),
-        z=post_areas.values
+        geojson=GJSON_LONDON_SECTORS,
+        locations=areas,
+        z=z
     )
 
     choromap.show()

@@ -29,7 +29,7 @@ class ChoroMap:
         z: List[float] = None,
         style: MapboxStyle = MapboxStyle.CARTO_POSITRON,
         access_token: str = None,
-        colorscale: Union[str, List[str]] = "hot"):
+        colorscale: Union[str, List[str]] = "oranges"):
 
         assert geojson is not None, 'Please provide file path to the GeoJSON file'
         assert locations is not None, 'Please provide the list of locations'
