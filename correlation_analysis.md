@@ -110,13 +110,13 @@ def values_normally_distributed(data: pd.DataFrame, variable: str) -> int:
     Returns:
 
         {int} -- Value describing the result and it's significance. 0 means
-        that null hypothesis can't be rejected (values aren't normally
-        distributed). 1 - 3 means that values are normally distributed, and
+        that null hypothesis can't be rejected (values are normally
+        distributed). 1 - 3 means that values aren't normally distributed, and
         higher value means higher statistical significance.
     """
     # p = 2-sided chi squared probability for the hypothesis test
     k2, p = normaltest(data[variable])
-
+    # Null hypothesis: variable is normally distributed
     # if p < 0.05, null hypothesis can be rejected and the result is statistically almost significant
     # if p < 0.01, -||- and the result is statistically significant
     # if p < 0.001, -||- and the result is statistically extremely significant
@@ -133,22 +133,23 @@ values = {}
 for variable in variables:
     values[variable] = values_normally_distributed(df, variable)
 
-smallest = min(values, key=values.get) # type: str
+largest = max(values, key=values.get) # type: str
 
-print('Smallest significance on variable {} with result {}'.format(smallest, values[smallest]))
-
-if values[smallest] == 0:
-    print('The null hypothesis can\'t be rejected on all variables, hence Spearman\'s method')
+print('Largest significance on variable {} with result {}'.format(largest, values[largest]))
+print('Null hypothesis: variable is normally distributed')
+if values[largest] > 0:
+    print('The null hypothesis can be rejected on some variables, hence Spearman\'s method')
 else:
-    print('The null hypothesis can be rejected on all variables, hence Pearson\'s method')
+    print('The null hypothesis can\'t be rejected on any variable, hence Pearson\'s method')
 
 ```
 
-    Smallest significance on variable review_count with result 3
-    The null hypothesis can be rejected on all variables, hence Pearson's method
+    Largest significance on variable review_count with result 3
+    Null hypothesis: variable is normally distributed
+    The null hypothesis can be rejected on some variables, hence Spearman's method
 
 
-As it can be seen from the results, the data is normally distributed. Thus, we should use Pearson's method for measuring correlation coeffecients.
+As it can be seen from the results, the data is not normally distributed. Thus, we should use Spearman's method for measuring correlation coeffecients.
 
 This regression analysis is trying to find correlation between two (or more) variables. Logically, the correlation between variables can be either positive or negative. The intepretation of correlation goes somewhat like this:
 
@@ -166,9 +167,9 @@ This regression analysis is trying to find correlation between two (or more) var
 
 
 ```python
-# Pearson's method for normally distributed data
+# Spearman's method for normally distributed data
 df_var = df[variables]
-correlations = df_var.corr(method = 'pearson')
+correlations = df_var.corr(method = 'spearman')
 
 f = plt.figure(figsize = (19, 15))
 plt.matshow(correlations, fignum = f.number)
@@ -189,13 +190,13 @@ print(correlations[CRIME_DENSITY])
     
     Correlations against crime_density:
     
-    review_count          0.063594
-    sentiment_unsafe      0.017094
-    sentiment_crime      -0.020057
-    sentiment_positive   -0.084109
-    sentiment_sum        -0.093748
-    area                 -0.314294
-    crime_count           0.064479
+    review_count          0.225701
+    sentiment_unsafe      0.090345
+    sentiment_crime      -0.091804
+    sentiment_positive   -0.119907
+    sentiment_sum        -0.133281
+    area                 -0.719982
+    crime_count           0.152563
     crime_density         1.000000
     Name: crime_density, dtype: float64
 
@@ -204,6 +205,6 @@ print(correlations[CRIME_DENSITY])
 
 The last step is the interpretention of results. In this step, we focus at the (explained) variable `crime_density`, which describes the amount of crimes per area (m^2). The goal is to find an explaining variable, which has correlation with the `crime_density`. As we have extracted several variables using NLP methods (all starting with `sentiment_`), we are particularly interested in those variables as explaining variables.
 
-As it can be seen from the previous step, none of the extracted features (starting with `sentiment_`) has correlation with the crime density. The variable `area` gives the highest correlation with `crime_density` (-0.31), whereas all others are between [-0.1, 0.1]. The weak negative correlation between `crime_density` and `area` can be easily explained; when the area size grows, the crime density drops. The usage of post codes in area division affects also to this; areas in the city that are densely populated tend to be divided into smaller post code areas than areas that are sparsely populated.
+As it can be seen from the previous step, none of the extracted features (starting with `sentiment_`) have significant correlation with the crime density. The variable `area` gives the highest correlation with `crime_density` (-0.72), whereas all others are between [-0.15, 0.25]. The weak negative correlation between `crime_density` and `area` can be easily explained; when the area size grows, the crime density drops. The usage of post codes in area division affects also to this; areas in the city that are densely populated tend to be divided into smaller post code areas than areas that are sparsely populated. Using regular grid-based area division might give completely different results.
 
 Thus, we can conclude that based on methods in this experiment, it's not possible to use hotel review data for sensing crime. However, we can't generalize these results as we have limited set of data and limited geographical area.
